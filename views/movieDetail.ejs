@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= film.title %> - MovieHub</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: radial-gradient(circle at top, #202020 0%, #050505 55%, #000 100%);
+            color: #f5f5f5;
+        }
+
+        h1.page-title {
+            text-align: center;
+            font-size: 38px;
+            margin: 20px 0 10px 0;
+            letter-spacing: 1px;
+        }
+
+        .top-bar {
+            max-width: 1100px;
+            margin: 0 auto 20px auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 10px;
+        }
+
+        .back-section {
+            height: 40px;
+            display: flex;
+            align-items: center;
+        }
+
+        .back-link {
+            background: transparent;
+            border: 1px solid #e50914;
+            padding: 8px 16px;
+            color: #e50914;
+            text-decoration: none;
+            border-radius: 999px;
+            font-size: 14px;
+            cursor: pointer;
+
+        }
+
+        .back-link:hover {
+            background: #e50914;
+            color: #fff;
+        }
+
+        #form {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        #input-text {
+            padding: 8px 12px;
+            width: 230px;
+            border-radius: 20px;
+            border: none;
+            outline: none;
+            font-size: 14px;
+        }
+
+        #btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: none;
+            background: #e50914;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        #btn:hover {
+            opacity: 0.9;
+        }
+
+        .page {
+            min-height: 80vh;
+            padding: 30px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .content {
+            max-width: 1100px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 50px;
+        }
+
+        .poster img {
+            width: 100%;
+            height: 470px;
+            border-radius: 14px;
+            object-fit: cover;
+        }
+
+        .details {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .title-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .details h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+
+        .badge {
+            font-size: 13px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            border: 1px solid #e50914;
+            color: #e50914;
+        }
+
+        .meta-row {
+            margin-top: 10px;
+            display: flex;
+            gap: 18px;
+            font-size: 15px;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #e50914;
+            margin-right: 4px;
+        }
+
+        .overview {
+            margin-top: 18px;
+            font-size: 17px;
+            line-height: 1.6;
+            max-width: 700px;
+        }
+
+        .tags {
+            margin-top: 16px;
+            font-size: 15px;
+        }
+
+        .tag-line {
+            margin-bottom: 6px;
+        }
+
+        .video-section {
+            margin-top: 26px;
+        }
+
+        .video-title {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%;
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        @media (max-width: 900px) {
+            .content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .poster img {
+                height: 380px;
+                max-width: 270px;
+                margin: 0 auto;
+            }
+
+            .page-title {
+                font-size: 30px;
+            }
+
+            .top-bar {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<h1 class="page-title">MovieHub</h1>
+
+<div class="top-bar">
+    <div class="back-section">
+        <a class="back-link" onclick="history.back()">Go Back</a>
+    </div>
+
+    
+</div>
+
+<div class="page">
+    <div class="content">
+
+        <% 
+            let imageUrl = film.image || (film.poster_path ? "https://image.tmdb.org/t/p/w500" + film.poster_path : null);
+            let year = film.release_date ? film.release_date.substring(0, 4) : film.year;
+            let genreText = film.genre || (film.genres ? film.genres.map(g => g.name).join(', ') : null);
+            let languageText =
+                film.language ||
+                (film.spoken_languages ? film.spoken_languages.map(l => l.english_name).join(', ') : null) ||
+                film.original_language;
+
+            let trailer = film.videos?.results?.find(v => v.type === "Trailer" && v.site === "YouTube");
+        %>
+
+        <div class="poster">
+            <img src="<%= imageUrl %>" alt="<%= film.title %>">
+        </div>
+
+        <div class="details">
+            <div class="title-row">
+                <h1><%= film.title %></h1>
+                <span class="badge">Movie</span>
+            </div>
+                
+            <div class="meta-row">
+                <% if (year) { %><span><%= year %></span><% } %>
+                <% if (film.runtime) { %><span><%= film.runtime %> min</span><% } %>
+                <%if(film.vote_average) { %>
+                    <span>⭐ <%= film.vote_average %></span>
+                <% } %>
+        <% let likes = film.likes || 0; %>
+
+<button id="likeBtn" style="background:none;border:none;font-size:20px;cursor:pointer;color:#bbb;">
+    ❤︎ <span id="likeCount"><%= likes %></span> Likes
+</button>
+
+            </div>
+
+            <% if (film.overview) { %>
+                <p class="overview"><%= film.overview %></p>
+            <% } %>
+
+            <div class="tags">
+                <% let starring = film.starring || (film.credits ? film.credits.cast.slice(0, 5).map(c => c.name).join(', ') : null); %>
+                <% if(starring) {%>
+                    <p class="tag-line"><span class="label">Starring:</span> <% starring.forEach(hero => { %><%= hero %> <% if(starring.indexOf(hero) !== starring.length -1) { %>, <% } %> <% }) %></p>
+                <% } %>
+                <% if(film.director) { %>
+                    <p class="tag-line"><span class="label">Director:</span> <%= film.director %></p>
+                <% } %>
+                <% if (genreText) { %>
+                    <p class="tag-line"><span class="label">Genres:</span> <%= genreText %></p>
+                <% } %>
+
+                <% if (languageText) { %>
+                    <p class="tag-line"><span class="label">Languages:</span> <%= languageText %></p>
+                <% } %>
+            </div>
+
+            <% if (trailer) { %>
+                <div class="video-section">
+                    <div class="video-title">Trailer</div>
+                    <div class="video-wrapper">
+                        <iframe src="https://www.youtube.com/embed/<%= trailer.key %>" allowfullscreen></iframe>
+                    </div>
+                </div>
+            <% } %>
+
+        </div>
+    </div>
+</div>
+<script>
+    let liked = false;
+
+    const btn = document.getElementById("likeBtn");
+    const countSpan = document.getElementById("likeCount");
+
+    btn.addEventListener("click", () => {
+        let count = parseInt(countSpan.innerText);
+
+        if (!liked) {
+            
+            count += 1;
+            countSpan.innerText = count;
+
+            btn.style.color = "red";           
+            btn.innerHTML = `❤️ <span id="likeCount">${count}</span> Likes`;
+
+            liked = true;
+
+    
+            fetch("/like/<%= film._id %>", { method: "POST" });
+        }
+    });
+</script>
+
+</body>
+</html>

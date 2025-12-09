@@ -1,0 +1,19 @@
+body {
+    padding: 0px;
+    margin: 0px;
+}
+
+  .movies-section {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .movieCard {
+            text-align: center;
+        }
+        .movieCard img {
+            width: 200px !important;
+            height: 250px !important;
+            object-fit: cover;
+        }

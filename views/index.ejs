@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MovieHub</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: radial-gradient(circle at top, #202020 0%, #050505 55%, #000 100%);
+            color: #f5f5f5;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 38px;
+            margin-top: 20px;
+            letter-spacing: 1px;
+        }
+
+        .top-bar {
+            max-width: 1100px;
+            margin: 0 auto 20px auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 10px;
+        }
+
+        .back-section {
+            height: 40px;
+            display: flex;
+            align-items: center;
+        }
+
+        .back-link {
+            background: transparent;
+            border: 1px solid #e50914;
+            padding: 8px 16px;
+            color: #e50914;
+            text-decoration: none;
+            border-radius: 999px;
+            font-size: 14px;
+        }
+
+        .back-link:hover {
+            background: #e50914;
+            color: #fff;
+        }
+
+        #form {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        #input-text {
+            padding: 8px 12px;
+            width: 230px;
+            border-radius: 20px;
+            border: none;
+            outline: none;
+            font-size: 14px;
+        }
+
+        #btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: none;
+            background: #e50914;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        #btn:hover {
+            opacity: 0.9;
+        }
+
+        .movies-section {
+            max-width: 1100px;
+            margin: 10px auto 40px auto;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 24px;
+        }
+
+        .movieCard {
+            text-align: center;
+            padding: 6px 0;
+            height: 260px;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+
+        .movieCard img {
+            width: 150px;
+            height: 210px;
+            object-fit: cover;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        .movieCard p {
+            font-size: 14px;
+            margin-top: 8px;
+            padding: 0 4px;
+        }
+
+        .movieCard:hover {
+            transform: scale(1.05);
+            opacity: 0.9;
+        }
+
+        .movies-section p {
+            margin: 0;
+        }
+
+        @media (max-width: 900px) {
+            .movies-section {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .movies-section {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .top-bar {
+                flex-direction: column-reverse;
+                gap: 10px;
+            }
+
+            #form {
+                justify-content: center;
+            }
+
+            .back-section {
+                justify-content: flex-start;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>MovieHub</h1>
+
+    <div class="top-bar">
+        <div class="back-section"></div>
+
+        <form action="/search" id="form">
+            <input id="input-text" type="text" placeholder="Ask film name">
+            <button type="submit" id="btn" style="cursor: pointer;">Search</button>
+        </form>
+    </div>
+
+    <div class="movies-section">
+        <% films.forEach((f) => { %>
+            <div class="movieCard">
+              <a href="/movieDetail/<%= f._id %>">
+                <img src="<%= f.image %>">
+              </a>
+               <p><%= f.title %></p>
+            </div>
+        <% }) %>
+    </div>
+
+    <script>
+        const form = document.getElementById('form');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const input = document.getElementById('input-text');
+            const text = input.value.trim();
+
+            try {
+                const res = await fetch('/search', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ text })
+                });
+
+                const data = await res.json();
+                const movies = data.movies;
+
+                const moviesSection = document.querySelector('.movies-section');
+                moviesSection.innerHTML = '';
+
+                if (!movies || movies.length === 0) {
+                    const p = document.createElement('p');
+                    p.innerText = 'Nothing Found... Try other Movies.!!!';
+                    moviesSection.appendChild(p);
+                    return;
+                }
+
+              if (!document.querySelector('.back-link')) {
+    const back = document.createElement('a');
+    back.className = 'back-link';
+    back.innerText = 'Go Back';
+    back.href = '/';
+    back.onclick = () => history.back();
+    const backSection = document.querySelector('.back-section');
+    backSection.appendChild(back);
+}
+
+
+                movies.forEach((m) => {
+                    if (m.poster_path != null) {
+                        const div = document.createElement('div');
+                        div.className = 'movieCard';
+
+                        const anchor = document.createElement('a');
+                        const img = document.createElement('img');
+                        const path = m.poster_path;
+
+                        img.src = `https://image.tmdb.org/t/p/w500${path}`;
+                        anchor.href = `/movieDetails/${m.id}`;
+
+                        const p = document.createElement('p');
+                        p.innerText = m.title;
+
+                        anchor.appendChild(img);
+                        div.appendChild(anchor);
+                        div.appendChild(p);
+                        moviesSection.appendChild(div);
+                    }
+                });
+            } catch (e) {
+                console.log(e, "ERROR ");
+            }
+            
+
+        });
+    </script>
+</body>
+</html>
