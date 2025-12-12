@@ -1,9 +1,15 @@
+require('dotenv').config();
+
 const express = require('express')
 
 const mongoose = require('mongoose')
 const app =  express()
+
+
+const api = process.env.API_KEY
+const mongoURI = process.env.MONGODB_URI
 mongoose.connect(
-  'mongodb+srv://uma932244_db_user:bBhkd97u9samYQtM@moviehub.smgx157.mongodb.net/filmsDatabase?retryWrites=true&w=majority'
+`${mongoURI}`
 )
 .then(() => {
     console.log("MongoDB Successfully connected")
@@ -74,7 +80,7 @@ app.get('/movieDetails/:id', async (req, res) => {
     const { id } = req.params;
 
     const response = await fetch(
-      `https://api.themoviedb.org/3/movie/${id}?api_key=f0193854c24cc3cf101f93dd46ba541f&language=en-US`
+      `https://api.themoviedb.org/3/movie/${id}?api_key=${api}&language=en-US`
     );
 
     if (!response.ok) {
@@ -98,7 +104,7 @@ app.post('/suggest', async (req, res) => {
       return res.json({ movies: [] });
     }
   try{
-    const response = await  fetch(`https://api.themoviedb.org/3/search/movie?api_key=f0193854c24cc3cf101f93dd46ba541f&query=${query}`)
+    const response = await  fetch(`https://api.themoviedb.org/3/search/movie?api_key=${api}&query=${query}`)
     const data = await response.json()
     const movies = (data.results || []).slice(0.5).map((m) => ({
       title: m.title,
@@ -117,7 +123,7 @@ app.post('/search', async (req, res) => {
 
   try {
     const response = await fetch(
-      `https://api.themoviedb.org/3/search/movie?api_key=f0193854c24cc3cf101f93dd46ba541f&query=${text}`
+      `https://api.themoviedb.org/3/search/movie?api_key=${api}&query=${text}`
     );
 
     if (response.ok) {
@@ -154,4 +160,4 @@ catch(e) {
 //     console.log("Server is running on 3000");
 // })
 
-module.exports = app;
+module.exports = app; 
