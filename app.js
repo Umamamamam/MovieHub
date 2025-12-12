@@ -106,7 +106,7 @@ app.post('/suggest', async (req, res) => {
   try{
     const response = await  fetch(`https://api.themoviedb.org/3/search/movie?api_key=${api}&query=${query}`)
     const data = await response.json()
-    const movies = (data.results || []).slice(0.5).map((m) => ({
+    const movies = (data.results || []).slice(0,5).map((m) => ({
       title: m.title,
       release_data: m.release_date
     }))
